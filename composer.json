@@ -1,0 +1,13 @@
+{
+    "name": "deanforantdesigns/cms",
+    "description": "WordPress Headless CMS for Dean Forant Designs",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Dean Forant",
+            "email": "dean@deanforantdesigns.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
