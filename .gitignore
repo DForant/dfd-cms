@@ -1,0 +1,18 @@
+conf
+logs
+/vendor
+/node_modules
+.DS_Store
+.env
+
+# ignore all the files in the dfd-cms/app/public
+# folder
+app/public
+
+#only whitelist specific themes and plugins
+## !app/public/wp-content/themes/theme-name
+## !app/public/wp-content/plugins/plugin-name
+
+# Whitelist themes here
+
+# Whitelist plugins here
