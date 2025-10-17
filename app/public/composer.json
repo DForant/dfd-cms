@@ -1,0 +1,30 @@
+{
+    "name": "deanforantdesigns/cms",
+    "description": "Wordpress Headless CMS for Dean Forant Designs",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Dean Forant",
+            "email": "dean@deanforantdesigns.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "wpackagist-plugin/advanced-custom-fields": "^6.6",
+        "wpackagist-plugin/faustwp": "^1.8",
+        "wpackagist-plugin/wordfence": "^8.1",
+        "wpackagist-plugin/wp-graphql": "^2.3",
+        "wpackagist-plugin/wpgraphql-acf": "^2.4"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://wpackagist.org"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}

@@ -7,7 +7,11 @@ logs
 
 # ignore all the files in the dfd-cms/app/public
 # folder
-app/public
+app/public/*
+
+# add composer.json and composer.lock back to the repo
+!app/public/composer.json
+!app/public/composer.lock
 
 #only whitelist specific themes and plugins
 ## !app/public/wp-content/themes/theme-name
