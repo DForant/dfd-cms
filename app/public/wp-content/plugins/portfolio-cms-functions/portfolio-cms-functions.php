@@ -1,0 +1,79 @@
+<?php
+/**
+* Plugin Name: Portfolio CMS Headless Functions
+* Description: Registers Custom Post Types (Articles, Projects) for the headless CMS.
+* Version: 1.0.0
+* Author: Dean Forant
+* Text Domain: cms-functions
+*/
+
+// Exit if accessed directly (security best practice)
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
+/**
+* Register Custom Post Types: Articles and Projects
+*/
+function portfolio_register_custom_post_types() {
+
+    // --- 1. ARTICLES/TUTORIALS CPT ---
+    $article_labels = array(
+        'name'          => _x( 'Articles', 'Post Type General Name', 'cms-functions' ),
+        'singular_name' => _x( 'Article', 'Post Type Singular Name', 'cms-functions' ),
+        'menu_name'     => __( 'Articles', 'cms-functions' ),
+        'all_items'     => __( 'All Articles', 'cms-functions' ),
+    );
+    $article_args = array(
+        'labels'             => $article_labels,
+        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
+        'public'             => true,
+        'publicly_queryable' => true,
+        'show_ui'            => true,
+        'show_in_menu'       => true,
+        'show_in_nav_menus'  => false,
+        'has_archive'        => false,
+        'rewrite'            => array( 'slug' => 'articles' ),
+        'show_in_graphql'    => true, // REQUIRED for WPGraphQL
+        'graphql_single_name' => 'article',
+        'graphql_plural_name' => 'articles',
+    );
+    register_post_type( 'article', $article_args );
+
+
+    // --- 2. PROJECTS/CASE STUDIES CPT ---
+    $project_labels = array(
+        'name'          => _x( 'Projects', 'Post Type General Name', 'cms-functions' ),
+        'singular_name' => _x( 'Project', 'Post Type Singular Name', 'cms-functions' ),
+        'menu_name'     => __( 'Projects', 'cms-functions' ),
+        'all_items'     => __( 'All Projects', 'cms-functions' ),
+    );
+    $project_args = array(
+        'labels'             => $project_labels,
+        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
+        'public'             => true,
+        'publicly_queryable' => true,
+        'show_ui'            => true,
+        'show_in_menu'       => true,
+        'show_in_nav_menus'  => false,
+        'has_archive'        => false,
+        'rewrite'            => array( 'slug' => 'projects' ),
+        'show_in_graphql'    => true, // REQUIRED for WPGraphQL
+        'graphql_single_name' => 'project',
+        'graphql_plural_name' => 'projects',
+    );
+    register_post_type( 'project', $project_args );
+}
+// Hook into the 'init' action to register the CPTs
+add_action( 'init', 'portfolio_register_custom_post_types' );
+
+/**
+* Activation Hook: Flushes rewrite rules to make CPT slugs available immediately.
+*/
+function portfolio_cms_activate() {
+    // Call the registration function on activation
+    portfolio_register_custom_post_types(); 
+    // Flush rules
+    flush_rewrite_rules();
+}
+register_activation_hook( __FILE__, 'portfolio_cms_activate' );
