@@ -20,3 +20,4 @@ app/public/*
 # Whitelist themes here
 
 # Whitelist plugins here
+!app/public/wp-content/plugins/portfolio-cms-functions
