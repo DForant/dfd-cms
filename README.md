@@ -292,3 +292,86 @@ This section details the steps to replicate the local CMS environment.
 - The WPGraphQL for ACF plugin is installed and activated.
 
 ### 1 Configure JSON Sync (Git Tracking)
+
+Before creating the fields, ensure ACF is set up to export your definitions to JSON files so they are tracked by GitHub:
+
+1. In your WordPress Admin, go to ACF → Tools.
+
+2. Navigate to the Settings tab (usually found near the top).
+
+3. Under the JSON section, verify or set the path where ACF will save your field definitions. A common and recommended path is wp-content/themes/your-theme-name/acf-json.
+
+4. Save Changes.
+
+### 2. Field Group: Articles/Tutorials
+
+This field group will hold all the UX, SEO, and tutorial-specific fields for your articles.
+
+**A. Create the Field Group**
+
+   1. Go to ACF → Field Groups → Add New.
+   
+   2. Set the Title to Article Fields.
+
+**B. Set the Location Rule** 
+- In the Location box, set the rule: Show this field group if Post Type is equal to Article.
+
+**C. Add Custom Fields**
+
+|Field Label|Field Name (Key)|Field Type|Instructions/Details|
+|-----------|----------------|----------|--------------------|
+|Reading Time(min)|reading_time|Number|Estimated time to read the article in minutes.|
+|Tutorial Level|tutorial_level|Select|Choices: Beginner, Intermediate, Advanced.|
+|Live Demo URL|live_demo_url|URL|Link to a deployed version of the code.|
+|Source Code URL|source_code_url|URL|Link to the GitHub repository.|
+|SEO Meta Description|seo_meta_description|Text Area|Custom description for the <meta name="description"> tag.|
+|Open Graph Image|og_image|Image|Specifically for social media sharing cards.
+
+**D. Configure GraphQL Settings**
+
+1. In the sidebar (or top section) of the Field Group settings, find the GraphQL box.
+
+2. Set Show in GraphQL to Yes.
+
+3. Set the GraphQL Field Name to articleData. This is the wrapper name we used in our queries (articleData { readingTime }).
+
+4. Click Save Changes.
+
+### 3. Field Group: Projects/Case Studies
+
+This field group will hold all the context, results, and visual fields for your project showcases.
+
+**A. Create the Field Group**
+1. Go to ACF → Field Groups → Add New.
+2. Set the Title to Project Fields.
+
+**B. Set the Location Rule**
+- In the Location box, set the rule: Show this field group if Post Type is equal to Project.
+
+**C. Add Custom Fields**
+
+|Field Label|Field Name (Key)|Field Type|Instructions/Details|
+|-----------|----------------|----------|--------------------|
+|Client Name|client_name|Text|Name of the client/company.|
+|Live Project URL|live_project_url|URL|Link to the deployed project.|
+|Project Date|project_date|Date Picker|Date the project was completed.|
+|Key Deliverables|key_deliverables|Checkbox|Options: Design, Development, Branding, SEO.|
+|Measurable Results|measurable_results|Repeater|Sub Fields: result (Text), value (Text).|
+|Client Testimonial|client_testimonial|Text Area|Direct quote from the client.|
+|Project Gallery|project_gallery|Gallery|Collection of images for the case study visual presentation.|
+
+**D. Configure GraphQL Settings**
+
+1. In the sidebar (or top section) of the Field Group settings, find the GraphQL box.
+
+2. Set Show in GraphQL to Yes.
+
+3. Set the GraphQL Field Name to projectData. This will be your wrapper name in queries (projectData { clientName }).
+
+4. Click Save Changes.
+
+## Final Verification Step
+
+After you save both field groups, navigate to the acf-json folder you configured in Step 1. You should now see two new JSON files, group_article_fields.json and group_project_fields.json (or similar).
+
+Commit these JSON files to GitHub (git add wp-content/themes/your-theme-name/acf-json/ && git commit -m "Added ACF field group definitions"). This ensures your CPT structure is now fully version-controlled!
