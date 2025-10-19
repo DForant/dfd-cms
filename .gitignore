@@ -5,19 +5,39 @@ logs
 .DS_Store
 .env
 
-# ignore all the files in the dfd-cms/app/public
-# folder
+# ignore all the files in the dfd-cms/app/public folder
 app/public/*
 
 # add composer.json and composer.lock back to the repo
 !app/public/composer.json
 !app/public/composer.lock
 
-#only whitelist specific themes and plugins
-## !app/public/wp-content/themes/theme-name
-## !app/public/wp-content/plugins/plugin-name
 
-# Whitelist themes here
+# ignore all wp-content folder contents by default
+app/public/wp-content/*
+app/public/wp-content/.*
+# Whitelist wp-content structure to allow plugin whitelisting
+!app/public/wp-content/
+!app/public/wp-content/plugins/
+
+#ignore all uploads
+app/public/wp-content/uploads/*
+
+#ignore all wflogs
+app/public/wp-content/wflogs/*
+
+# Ignore all plugins by default
+app/public/wp-content/plugins/*
+app/public/wp-content/plugins/.*
 
 # Whitelist plugins here
-!app/public/wp-content/plugins/portfolio-cms-functions
+# Whitelist only the portfolio-cms-functions plugin and all its contents
+!app/public/wp-content/plugins/portfolio-cms-functions/
+!app/public/wp-content/plugins/portfolio-cms-functions/**
+
+# ignore all themes by default
+app/public/wp-content/themes/*
+
+# Whitelist themes here
+## !app/public/wp-content/themes/theme-name
+
