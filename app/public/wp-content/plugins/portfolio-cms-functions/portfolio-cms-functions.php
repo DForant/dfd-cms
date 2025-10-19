@@ -67,18 +67,29 @@ function portfolio_register_custom_post_types() {
 // Hook into the 'init' action to register the CPTs
 add_action( 'init', 'portfolio_register_custom_post_types' );
 
+function portfolio_cms_ensure_acf_json_dir() {
+    $dir = PORTFOLIO_CMS_PATH . '/acf-json';
+    if ( ! is_dir( $dir ) ) {
+        wp_mkdir_p( $dir );
+    }
+    // Optional: keep folder in Git when empty
+    if ( is_dir( $dir ) && ! file_exists( $dir . '/.gitkeep' ) ) {
+        @file_put_contents( $dir . '/.gitkeep', '' );
+    }
+}
+
 /**
 * Activation Hook: Flushes rewrite rules to make CPT slugs available immediately.
 */
 function portfolio_cms_activate() {
     // Call the registration function on activation
     portfolio_register_custom_post_types(); 
+    // Ensure ACF JSON directory exists
+    portfolio_cms_ensure_acf_json_dir();
     // Flush rules
     flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'portfolio_cms_activate' );
-
-
 
 // Define the path to your plugin directory
 define( 'PORTFOLIO_CMS_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
