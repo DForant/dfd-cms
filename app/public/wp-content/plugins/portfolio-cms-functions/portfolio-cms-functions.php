@@ -77,3 +77,36 @@ function portfolio_cms_activate() {
     flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'portfolio_cms_activate' );
+
+
+
+// Define the path to your plugin directory
+define( 'PORTFOLIO_CMS_PATH', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
+
+/**
+ * Filter to set the ACF JSON save path to the plugin folder.
+ * * @param string $path The default path.
+ * @return string The new path.
+ */
+add_filter('acf/settings/save_json', 'portfolio_acf_json_save_point');
+function portfolio_acf_json_save_point( $path ) {
+    // Set the path to the 'acf-json' folder in your plugin
+    $path = PORTFOLIO_CMS_PATH . '/acf-json';
+    return $path;
+}
+
+/**
+ * Filter to add the plugin folder to the ACF JSON load paths.
+ * * @param array $paths An array of paths to look for ACF JSON files.
+ * @return array The updated array of paths.
+ */
+add_filter('acf/settings/load_json', 'portfolio_acf_json_load_point');
+function portfolio_acf_json_load_point( $paths ) {
+    // Remove the original (theme) path if you don't want to load from themes
+    unset($paths[0]); 
+    
+    // Append the new path to the 'acf-json' folder in your plugin
+    $paths[] = PORTFOLIO_CMS_PATH . '/acf-json';
+    
+    return $paths;
+}
