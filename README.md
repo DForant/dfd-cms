@@ -356,9 +356,7 @@ This field group will hold all the context, results, and visual fields for your 
 |Live Project URL|live_project_url|URL|Link to the deployed project.|
 |Project Date|project_date|Date Picker|Date the project was completed.|
 |Key Deliverables|key_deliverables|Checkbox|Options: Design, Development, Branding, SEO.|
-|Measurable Results|measurable_results|Repeater|Sub Fields: result (Text), value (Text).|
-|Client Testimonial|client_testimonial|Text Area|Direct quote from the client.|
-|Project Gallery|project_gallery|Gallery|Collection of images for the case study visual presentation.|
+|Source Repository URL|source_repository_url|URL|Link to the souce control repository (if availabile)|
 
 **D. Configure GraphQL Settings**
 
