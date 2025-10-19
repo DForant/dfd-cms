@@ -7,7 +7,7 @@ A decoupled, content management system built on WordPress, designed to securely 
 
 ## 1. Executive Summary & Architecture
 
-This project establishes the backend for a portfolio website using a headless architecture. The core principle is to use WordPress for content management only, while a separate, front-end application handles the presentation.
+This project establishes the backend for my portfolio website using a headless architecture. The core principle is to use WordPress for content management only, while a separate, front-end application handles the presentation.
 
 ### Key Architectural Decisions:
 
