@@ -1,0 +1,372 @@
+[
+    {
+        "key": "group_68f48f1684af7",
+        "title": "Article Fields",
+        "fields": [
+            {
+                "key": "field_68f48f19bd9bb",
+                "label": "Reading Time (min)",
+                "name": "reading_time",
+                "aria-label": "",
+                "type": "number",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "min": "",
+                "max": "",
+                "allow_in_bindings": 0,
+                "placeholder": "",
+                "step": "",
+                "prepend": "",
+                "append": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "readingTimeMin",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f48f7bbd9bc",
+                "label": "Tutorial Level",
+                "name": "tutorial_level",
+                "aria-label": "",
+                "type": "select",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "Beginner": "Beginner",
+                    "Intermediate": "Intermediate",
+                    "Advanced": "Advanced"
+                },
+                "default_value": false,
+                "return_format": "value",
+                "multiple": 0,
+                "allow_null": 0,
+                "allow_in_bindings": 0,
+                "ui": 0,
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "tutorialLevel",
+                "graphql_non_null": 0,
+                "ajax": 0,
+                "placeholder": "",
+                "create_options": 0,
+                "save_options": 0
+            },
+            {
+                "key": "field_68f48fb4bd9bd",
+                "label": "Live Demo URL",
+                "name": "live_demo_url",
+                "aria-label": "",
+                "type": "url",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "allow_in_bindings": 0,
+                "placeholder": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "liveDemoUrl",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f48fcbbd9be",
+                "label": "Source Code URL",
+                "name": "source_code_url",
+                "aria-label": "",
+                "type": "url",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "allow_in_bindings": 0,
+                "placeholder": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "sourceCodeUrl",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f490f9bd9c0",
+                "label": "SEO Meta Description",
+                "name": "seo_meta_description",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "allow_in_bindings": 0,
+                "rows": "",
+                "placeholder": "",
+                "new_lines": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "seoMetaDescription",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f4912bbd9c1",
+                "label": "Open Graph Image",
+                "name": "og_image",
+                "aria-label": "",
+                "type": "image",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "return_format": "array",
+                "library": "all",
+                "min_width": "",
+                "min_height": "",
+                "min_size": "",
+                "max_width": "",
+                "max_height": "",
+                "max_size": "",
+                "mime_types": "",
+                "allow_in_bindings": 0,
+                "preview_size": "medium",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "ooenGraphImage"
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "post_type",
+                    "operator": "==",
+                    "value": "article"
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "default",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": true,
+        "description": "",
+        "show_in_rest": 0,
+        "display_title": "",
+        "show_in_graphql": 1,
+        "graphql_field_name": "articleFields",
+        "map_graphql_types_from_location_rules": 0,
+        "graphql_types": ""
+    },
+    {
+        "key": "group_68f4d565b4060",
+        "title": "Project Fields",
+        "fields": [
+            {
+                "key": "field_68f4d567c3f13",
+                "label": "Client Name",
+                "name": "client_name",
+                "aria-label": "",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "allow_in_bindings": 0,
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "clientName",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f4d58cc3f14",
+                "label": "Live Project URL",
+                "name": "live_project_url",
+                "aria-label": "",
+                "type": "url",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "allow_in_bindings": 0,
+                "placeholder": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "liveProjectUrl",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f4d5c8c3f15",
+                "label": "Project Date",
+                "name": "project_date",
+                "aria-label": "",
+                "type": "date_picker",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "display_format": "d\/m\/Y",
+                "return_format": "d\/m\/Y",
+                "first_day": 0,
+                "default_to_current_date": 0,
+                "allow_in_bindings": 0,
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "projectDate",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f50a67cdd87",
+                "label": "Client Testimonial",
+                "name": "client_testimonial",
+                "aria-label": "",
+                "type": "textarea",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "maxlength": "",
+                "allow_in_bindings": 0,
+                "rows": "",
+                "placeholder": "",
+                "new_lines": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "clientTestimonial",
+                "graphql_non_null": 0
+            },
+            {
+                "key": "field_68f4d5edc3f16",
+                "label": "Key Deliverables",
+                "name": "key_deliverables",
+                "aria-label": "",
+                "type": "select",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "choices": {
+                    "Design,": "Design,",
+                    "Development,": "Development,",
+                    "Branding,": "Branding,",
+                    "SEO": "SEO"
+                },
+                "default_value": [],
+                "return_format": "value",
+                "multiple": 1,
+                "allow_null": 0,
+                "allow_in_bindings": 0,
+                "ui": 0,
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "keyDeliverables",
+                "graphql_non_null": 0,
+                "ajax": 0,
+                "placeholder": "",
+                "create_options": 0,
+                "save_options": 0
+            },
+            {
+                "key": "field_68f4d6e2c3f17",
+                "label": "Source Repository URL",
+                "name": "source_repository_url",
+                "aria-label": "",
+                "type": "url",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "allow_in_bindings": 0,
+                "placeholder": "",
+                "show_in_graphql": 1,
+                "graphql_description": "",
+                "graphql_field_name": "sourceRepositoryUrl",
+                "graphql_non_null": 0
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "post_type",
+                    "operator": "==",
+                    "value": "project"
+                }
+            ]
+        ],
+        "menu_order": 0,
+        "position": "normal",
+        "style": "default",
+        "label_placement": "top",
+        "instruction_placement": "label",
+        "hide_on_screen": "",
+        "active": true,
+        "description": "",
+        "show_in_rest": 0,
+        "display_title": "",
+        "show_in_graphql": 1,
+        "graphql_field_name": "projectFields",
+        "map_graphql_types_from_location_rules": 0,
+        "graphql_types": ""
+    }
+]

@@ -291,19 +291,7 @@ This section details the steps to replicate the local CMS environment.
 
 - The WPGraphQL for ACF plugin is installed and activated.
 
-### 1 Configure JSON Sync (Git Tracking)
-
-Before creating the fields, ensure ACF is set up to export your definitions to JSON files so they are tracked by GitHub:
-
-1. In your WordPress Admin, go to ACF → Tools.
-
-2. Navigate to the Settings tab (usually found near the top).
-
-3. Under the JSON section, verify or set the path where ACF will save your field definitions. A common and recommended path is wp-content/themes/your-theme-name/acf-json.
-
-4. Save Changes.
-
-### 2. Field Group: Articles/Tutorials
+### 1. Field Group: Articles/Tutorials
 
 This field group will hold all the UX, SEO, and tutorial-specific fields for your articles.
 
@@ -337,7 +325,7 @@ This field group will hold all the UX, SEO, and tutorial-specific fields for you
 
 4. Click Save Changes.
 
-### 3. Field Group: Projects/Case Studies
+### 2. Field Group: Projects/Case Studies
 
 This field group will hold all the context, results, and visual fields for your project showcases.
 
@@ -355,6 +343,7 @@ This field group will hold all the context, results, and visual fields for your 
 |Client Name|client_name|Text|Name of the client/company.|
 |Live Project URL|live_project_url|URL|Link to the deployed project.|
 |Project Date|project_date|Date Picker|Date the project was completed.|
+|Client Testimonial|Textarea|Client Testimonial
 |Key Deliverables|key_deliverables|Checkbox|Options: Design, Development, Branding, SEO.|
 |Source Repository URL|source_repository_url|URL|Link to the souce control repository (if availabile)|
 
@@ -368,8 +357,25 @@ This field group will hold all the context, results, and visual fields for your 
 
 4. Click Save Changes.
 
-## Final Verification Step
+## Create an export of the custom fields and groups in JSON format. 
 
-After you save both field groups, navigate to the acf-json folder you configured in Step 1. You should now see two new JSON files, group_article_fields.json and group_project_fields.json (or similar).
+We want to be able to track the custom fields and groups in source control. In order to do this we will create an export of our fields and groups and place the file in the acf-json folder under the portfolio-cms-functions plugin folder.
 
-Commit these JSON files to GitHub (git add wp-content/themes/your-theme-name/acf-json/ && git commit -m "Added ACF field group definitions"). This ensures your CPT structure is now fully version-controlled!
+1. In the portfolio-cms-functions plugin folder create a folder callled acf-json. This will be the folder where we export our exported json file to.
+
+2. Inside this folder create a index.php file and add the following
+
+```
+<?php 
+    // Silence is Golden
+?>
+```
+
+2.  In the Wordpress admin page, navigate to ACF>Tools 
+
+3. In the Export panel, check the Toggle All checkbox to include both Article and Project fields
+
+4. Click the Export As JSON button
+
+5. When the file Save as dialog pops up navigate to portfolio-cms-functions/acf-json folder and save the json file as portfolio-fields.json
+
