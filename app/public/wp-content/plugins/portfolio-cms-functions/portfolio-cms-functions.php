@@ -28,7 +28,7 @@ function portfolio_register_custom_post_types() {
         'labels'             => $article_labels,
         'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
         'public'             => true,
-        'show-in-rest'       => true,
+        'show_in_rest'       => true,
         'publicly_queryable' => true,
         'show_ui'            => true,
         'show_in_menu'       => true,
@@ -53,7 +53,7 @@ function portfolio_register_custom_post_types() {
         'labels'             => $project_labels,
         'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
         'public'             => true,
-        'show-in-rest'       => true,
+        'show_in_rest'       => true,
         'publicly_queryable' => true,
         'show_ui'            => true,
         'show_in_menu'       => true,
@@ -123,3 +123,14 @@ function portfolio_acf_json_load_point( $paths ) {
     
     return $paths;
 }
+
+/**
+ * Ensure Gutenberg (block editor) is enabled for custom post types.
+ * Some environments/plugins may disable it; this guarantees it's on for these CPTs.
+ */
+add_filter( 'use_block_editor_for_post_type', function ( $use_block_editor, $post_type ) {
+    if ( in_array( $post_type, array( 'article', 'project' ), true ) ) {
+        return true;
+    }
+    return $use_block_editor;
+}, 10, 2 );
