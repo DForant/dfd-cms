@@ -69,6 +69,56 @@ function portfolio_register_custom_post_types() {
 // Hook into the 'init' action to register the CPTs
 add_action( 'init', 'portfolio_register_custom_post_types' );
 
+/**
+ * Register Taxonomies: Categories (Hierarchical) and Tags (Non-Hierarchical)
+ */
+function portfolio_register_taxonomies() {
+
+    // --- 1. HIERARCHICAL CATEGORY TAXONOMY (e.g., Graphic Design -> How-To) ---
+    $category_labels = array(
+        'name'          => _x( 'Content Categories', 'taxonomy general name', 'cms-functions' ),
+        'singular_name' => _x( 'Content Category', 'taxonomy singular name', 'cms-functions' ),
+        'menu_name'     => __( 'Categories', 'cms-functions' ),
+    );
+    $category_args = array(
+        'labels'             => $category_labels,
+        'hierarchical'       => true, // THIS IS KEY for parent/sub-categories
+        'public'             => true,
+        'show_ui'            => true,
+        'show_in_rest'       => true,
+        'show_admin_column'  => true,
+        'query_var'          => true,
+        'show_in_graphql'    => true, // Essential for WPGraphQL
+        'graphql_single_name' => 'contentCategory',
+        'graphql_plural_name' => 'contentCategories',
+    );
+    // Attach to both 'article' and 'project' CPTs
+    register_taxonomy( 'content_category', array( 'article', 'project' ), $category_args );
+
+
+    // --- 2. NON-HIERARCHICAL TAG TAXONOMY (e.g., WordPress, Figma, SCSS) ---
+    $tag_labels = array(
+        'name'          => _x( 'Content Tags', 'taxonomy general name', 'cms-functions' ),
+        'singular_name' => _x( 'Content Tag', 'taxonomy singular name', 'cms-functions' ),
+        'menu_name'     => __( 'Tags', 'cms-functions' ),
+    );
+    $tag_args = array(
+        'labels'             => $tag_labels,
+        'hierarchical'       => false, // THIS IS KEY for flat, keyword-style tags
+        'public'             => true,
+        'show_ui'            => true,
+        'show_in_rest'       => true,
+        'show_admin_column'  => true,
+        'query_var'          => true,
+        'show_in_graphql'    => true, // Essential for WPGraphQL
+        'graphql_single_name' => 'contentTag',
+        'graphql_plural_name' => 'contentTags',
+    );
+    // Attach to both 'article' and 'project' CPTs
+    register_taxonomy( 'content_tag', array( 'article', 'project' ), $tag_args );
+}
+add_action( 'init', 'portfolio_register_taxonomies' ); // Execute the function
+
 function portfolio_cms_ensure_acf_json_dir() {
     $dir = PORTFOLIO_CMS_PATH . '/acf-json';
     if ( ! is_dir( $dir ) ) {
