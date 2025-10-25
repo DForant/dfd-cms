@@ -26,7 +26,8 @@ function portfolio_register_custom_post_types() {
     );
     $article_args = array(
         'labels'             => $article_labels,
-        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
+        // Enable author support so REST can include author and UI shows Author box
+        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'author' ),
         'public'             => true,
         'show_in_rest'       => true,
         'publicly_queryable' => true,
@@ -51,7 +52,8 @@ function portfolio_register_custom_post_types() {
     );
     $project_args = array(
         'labels'             => $project_labels,
-        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ),
+        // Also enable author on projects for consistency
+        'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'author' ),
         'public'             => true,
         'show_in_rest'       => true,
         'publicly_queryable' => true,
