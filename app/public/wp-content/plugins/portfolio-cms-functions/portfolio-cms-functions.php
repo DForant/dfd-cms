@@ -186,3 +186,88 @@ add_filter( 'use_block_editor_for_post_type', function ( $use_block_editor, $pos
     }
     return $use_block_editor;
 }, 10, 2 );
+
+/**
+ * Register ACF user meta fields for REST API.
+ * Exposes author profile details to the /wp/v2/users endpoint.
+ */
+function portfolio_register_user_rest_fields() {
+    // Define all user meta fields from the Author Profile Details ACF group
+    $user_fields = array(
+        'author_profile_image' => 'url',
+        'linkedin_url'         => 'string',
+        'twitter_url'          => 'string',
+        'instagram_url'        => 'string',
+        'facebook_url'         => 'string',
+        'youtube_url'          => 'string',
+        'web_portfolio_url'    => 'string',
+        'other_url_1'          => 'string',
+        'other_url_2'          => 'string',
+        'other_url_3'          => 'string',
+        'author_cta_hook'      => 'string',
+        'author_cta_action_url' => 'string',
+    );
+
+    foreach ( $user_fields as $field_name => $field_type ) {
+        register_rest_field(
+            'user',
+            $field_name,
+            array(
+                'get_callback' => function( $user ) use ( $field_name ) {
+                    $value = get_field( $field_name, 'user_' . $user['id'] );
+                    return $value ? $value : '';
+                },
+                'update_callback' => function( $value, $user ) use ( $field_name ) {
+                    return update_field( $field_name, $value, 'user_' . $user->ID );
+                },
+                'schema' => array(
+                    'description' => sprintf( 'ACF field: %s', $field_name ),
+                    'type'        => $field_type,
+                ),
+            )
+        );
+    }
+}
+add_action( 'rest_api_init', 'portfolio_register_user_rest_fields' );
+
+/**
+ * Register author profile fields for posts in REST API.
+ * Adds author_profile field to articles and projects that includes all author meta.
+ */
+function portfolio_register_author_profile_for_posts() {
+    $post_types = array( 'article', 'project' );
+
+    foreach ( $post_types as $post_type ) {
+        register_rest_field(
+            $post_type,
+            'author_profile',
+            array(
+                'get_callback' => function( $post ) {
+                    $author_id = $post['author'];
+                    
+                    // Get all author profile fields
+                    return array(
+                        'author_profile_image' => get_field( 'author_profile_image', 'user_' . $author_id ) ?: '',
+                        'linkedin_url'         => get_field( 'linkedin_url', 'user_' . $author_id ) ?: '',
+                        'twitter_url'          => get_field( 'twitter_url', 'user_' . $author_id ) ?: '',
+                        'instagram_url'        => get_field( 'instagram_url', 'user_' . $author_id ) ?: '',
+                        'facebook_url'         => get_field( 'facebook_url', 'user_' . $author_id ) ?: '',
+                        'youtube_url'          => get_field( 'youtube_url', 'user_' . $author_id ) ?: '',
+                        'web_portfolio_url'    => get_field( 'web_portfolio_url', 'user_' . $author_id ) ?: '',
+                        'other_url_1'          => get_field( 'other_url_1', 'user_' . $author_id ) ?: '',
+                        'other_url_2'          => get_field( 'other_url_2', 'user_' . $author_id ) ?: '',
+                        'other_url_3'          => get_field( 'other_url_3', 'user_' . $author_id ) ?: '',
+                        'author_cta_hook'      => get_field( 'author_cta_hook', 'user_' . $author_id ) ?: '',
+                        'author_cta_action_url' => get_field( 'author_cta_action_url', 'user_' . $author_id ) ?: '',
+                    );
+                },
+                'schema' => array(
+                    'description' => 'Author profile details including social links and CTA information',
+                    'type'        => 'object',
+                ),
+            )
+        );
+    }
+}
+add_action( 'rest_api_init', 'portfolio_register_author_profile_for_posts' );
+add_action( 'rest_api_init', 'portfolio_register_author_profile_for_posts' );
