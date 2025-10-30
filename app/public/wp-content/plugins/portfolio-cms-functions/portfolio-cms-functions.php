@@ -270,4 +270,3 @@ function portfolio_register_author_profile_for_posts() {
     }
 }
 add_action( 'rest_api_init', 'portfolio_register_author_profile_for_posts' );
-add_action( 'rest_api_init', 'portfolio_register_author_profile_for_posts' );
