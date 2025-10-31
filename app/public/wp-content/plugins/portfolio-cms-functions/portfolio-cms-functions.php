@@ -186,3 +186,84 @@ add_filter( 'use_block_editor_for_post_type', function ( $use_block_editor, $pos
     }
     return $use_block_editor;
 }, 10, 2 );
+
+/**
+ * Get author profile field definitions
+ * 
+ * @return array Author profile fields with their types
+ */
+function portfolio_get_author_profile_fields() {
+    return array(
+        'author_profile_image' => 'url',
+        'linkedin_url' => 'string',
+        'twitter_url' => 'string',
+        'instagram_url' => 'string',
+        'facebook_url' => 'string',
+        'youtube_url' => 'string',
+        'web_portfolio_url' => 'string',
+        'other_url_1' => 'string',
+        'other_url_2' => 'string',
+        'other_url_3' => 'string',
+        'author_cta_hook' => 'string',
+        'author_cta_action_url' => 'string',
+    );
+}
+
+/**
+ * Register REST API fields for custom user meta (Author Profile Details)
+ */
+function portfolio_register_user_rest_fields() {
+    $user_fields = portfolio_get_author_profile_fields();
+
+    foreach ( $user_fields as $field_name => $field_type ) {
+        register_rest_field(
+            'user',
+            $field_name,
+            array(
+                'get_callback' => function( $user ) use ( $field_name ) {
+                    return get_field( $field_name, 'user_' . $user['id'] );
+                },
+                'update_callback' => function( $value, $user ) use ( $field_name ) {
+                    return update_field( $field_name, $value, 'user_' . $user['id'] );
+                },
+                'schema' => array(
+                    'description' => sprintf( 'Author profile field: %s', $field_name ),
+                    'type' => $field_type,
+                ),
+            )
+        );
+    }
+}
+add_action( 'rest_api_init', 'portfolio_register_user_rest_fields' );
+
+/**
+ * Register REST API fields for author meta on posts (articles and projects)
+ */
+function portfolio_register_author_rest_fields() {
+    $post_types = array( 'article', 'project' );
+    $author_fields = portfolio_get_author_profile_fields();
+
+    foreach ( $post_types as $post_type ) {
+        register_rest_field(
+            $post_type,
+            'author_meta',
+            array(
+                'get_callback' => function( $post ) use ( $author_fields ) {
+                    $author_id = $post['author'];
+                    $author_data = array();
+                    
+                    foreach ( $author_fields as $field_name => $field_type ) {
+                        $author_data[$field_name] = get_field( $field_name, 'user_' . $author_id );
+                    }
+                    
+                    return $author_data;
+                },
+                'schema' => array(
+                    'description' => 'Author profile metadata',
+                    'type' => 'object',
+                ),
+            )
+        );
+    }
+}
+add_action( 'rest_api_init', 'portfolio_register_author_rest_fields' );
