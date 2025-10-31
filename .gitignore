@@ -8,6 +8,9 @@ logs
 # ignore all the files in the dfd-cms/app/public folder
 app/public/*
 
+# Ignore all the files in the cms-dfd/app/sql folder
+app/sql/*
+
 # add composer.json and composer.lock back to the repo
 !app/public/composer.json
 !app/public/composer.lock
