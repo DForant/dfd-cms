@@ -188,10 +188,12 @@ add_filter( 'use_block_editor_for_post_type', function ( $use_block_editor, $pos
 }, 10, 2 );
 
 /**
- * Register REST API fields for custom user meta (Author Profile Details)
+ * Get author profile field definitions
+ * 
+ * @return array Author profile fields with their types
  */
-function portfolio_register_user_rest_fields() {
-    $user_fields = array(
+function portfolio_get_author_profile_fields() {
+    return array(
         'author_profile_image' => 'url',
         'linkedin_url' => 'string',
         'twitter_url' => 'string',
@@ -205,6 +207,13 @@ function portfolio_register_user_rest_fields() {
         'author_cta_hook' => 'string',
         'author_cta_action_url' => 'string',
     );
+}
+
+/**
+ * Register REST API fields for custom user meta (Author Profile Details)
+ */
+function portfolio_register_user_rest_fields() {
+    $user_fields = portfolio_get_author_profile_fields();
 
     foreach ( $user_fields as $field_name => $field_type ) {
         register_rest_field(
@@ -215,7 +224,7 @@ function portfolio_register_user_rest_fields() {
                     return get_field( $field_name, 'user_' . $user['id'] );
                 },
                 'update_callback' => function( $value, $user ) use ( $field_name ) {
-                    return update_field( $field_name, $value, 'user_' . $user->ID );
+                    return update_field( $field_name, $value, 'user_' . $user['id'] );
                 },
                 'schema' => array(
                     'description' => sprintf( 'Author profile field: %s', $field_name ),
@@ -232,21 +241,7 @@ add_action( 'rest_api_init', 'portfolio_register_user_rest_fields' );
  */
 function portfolio_register_author_rest_fields() {
     $post_types = array( 'article', 'project' );
-    
-    $author_fields = array(
-        'author_profile_image' => 'url',
-        'linkedin_url' => 'string',
-        'twitter_url' => 'string',
-        'instagram_url' => 'string',
-        'facebook_url' => 'string',
-        'youtube_url' => 'string',
-        'web_portfolio_url' => 'string',
-        'other_url_1' => 'string',
-        'other_url_2' => 'string',
-        'other_url_3' => 'string',
-        'author_cta_hook' => 'string',
-        'author_cta_action_url' => 'string',
-    );
+    $author_fields = portfolio_get_author_profile_fields();
 
     foreach ( $post_types as $post_type ) {
         register_rest_field(
