@@ -32,6 +32,7 @@ This project establishes the backend for my portfolio website using a headless a
 | **Data Modeling** | Advanced Custom Fields (ACF) | Defining custom fields for content types. |
 | **Security** | Wordfence WAF, HTTPS/SSL | Web application firewall and traffic encryption. |
 | **Development Tools** | Composer, Local by Flywheel, Git | Dependency management and local environment setup. |
+| **Deployment** | Duplicator | Migration and deployment from local to staging/production environments. |
 
 ### Composer Configuration Summary
 
@@ -95,22 +96,68 @@ The **Wordfence** plugin was configured for maximum protection:
 ## 5. Deployment Strategy
 ----------------------
 
-The project utilizes a decoupled two-stage (Staging and Production) deployment process using hosting.net.
+The project utilizes a decoupled two-stage (Staging and Production) deployment process with the following environments:
 
-### A. WordPress Backend (Content & CMS)
+*   **Staging Environment:** `stg-cms.deanforant.com` (hosted on hosting.com)
+*   **Production Environment:** `cms.deanforant.com` (hosted on hosting.com)
 
-*   The WordPress backend is deployed using the host's cPanel/hPanel Staging tool for easy staging environment creation.
-    
-*   **Database Synchronization** is performed from Staging to Production only when content structure, plugins, or security settings are verified, preventing direct changes to the live environment.
-    
-*   The `vendor/autoload.php` file is included in `wp-config.php` to ensure all Composer-managed dependencies are loaded efficiently.
-    
+### A. WordPress Backend Deployment (Content & CMS)
+
+The WordPress backend is deployed from Local by Flywheel to the staging environment using the **Duplicator** plugin.
+
+#### Deploying from Local to Staging with Duplicator
+
+1.  **Install Duplicator on Local:**
+    *   In your Local by Flywheel WordPress site, navigate to **Plugins → Add New**.
+    *   Search for "Duplicator" and install the free version by Snap Creek.
+    *   Activate the plugin.
+
+2.  **Create a Package:**
+    *   Go to **Duplicator → Packages** in your WordPress admin.
+    *   Click **Create New**.
+    *   Name your package (e.g., "staging-deploy-YYYYMMDD").
+    *   Under **Archive** settings, ensure all necessary files are included (wp-content, plugins, themes).
+    *   Click **Next** to scan your site for issues.
+    *   Once the scan passes, click **Build** to create the package.
+    *   Download both the **Installer** file (`installer.php`) and the **Archive** file (`.zip` package).
+
+3.  **Prepare Staging Environment on hosting.com:**
+    *   Log into your hosting.com account and access **cPanel**.
+    *   Navigate to **Domains** and ensure `stg-cms.deanforant.com` is set up and pointing to a directory (e.g., `public_html/stg-cms`).
+    *   Create a new MySQL database and user via **MySQL Database Wizard** in cPanel.
+    *   Note the database name, username, password, and host (usually `localhost`).
+
+4.  **Upload Package to Staging:**
+    *   In cPanel, use **File Manager** or an FTP client to navigate to the staging directory.
+    *   Upload both the `installer.php` and the `.zip` archive file to the root of `stg-cms.deanforant.com`.
+
+5.  **Run the Duplicator Installer:**
+    *   In your browser, navigate to `https://stg-cms.deanforant.com/installer.php`.
+    *   Accept the terms and conditions, then click **Next**.
+    *   Enter your database credentials (name, user, password, host).
+    *   Click **Test Database** to verify the connection, then click **Next**.
+    *   Review the settings and click **Next** to extract and install the site.
+    *   Once complete, click **Admin Login** to log into your newly deployed staging site.
+    *   **Important:** Delete the `installer.php` and archive `.zip` files from the server for security.
+
+6.  **Post-Deployment Configuration:**
+    *   Verify all plugins are active, especially Wordfence, WPGraphQL, and ACF.
+    *   Update permalinks: Go to **Settings → Permalinks** and click **Save Changes** to flush rewrite rules.
+    *   Configure environment-specific settings (e.g., API endpoints, Application Passwords for staging).
+    *   The `vendor/autoload.php` file should already be included in `wp-config.php` to ensure all Composer-managed dependencies are loaded efficiently.
+
+7.  **Deploying to Production:**
+    *   Follow the same Duplicator process to deploy from staging to `cms.deanforant.com`.
+    *   **Database Synchronization** should be performed from Staging to Production only when content structure, plugins, or security settings are verified, preventing direct changes to the live environment.
+    *   Always test thoroughly on staging before deploying to production.
 
 ### B. Frontend Application
 
-*   The front-end code (in a separate public GitHub repository) is deployed to the hosting environment using either Direct Integration (if available) or a manual process (FTP).
+*   The front-end application is hosted separately on **Netlify** (in a separate public GitHub repository).
     
-*   The front-end is responsible for making authenticated GraphQL queries to the production WordPress API.
+*   The front-end is responsible for making authenticated GraphQL queries to the WordPress API endpoints:
+    *   Staging frontend connects to: `https://stg-cms.deanforant.com/graphql`
+    *   Production frontend connects to: `https://cms.deanforant.com/graphql`
     
 
 * * *
