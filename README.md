@@ -115,7 +115,7 @@ The WordPress backend is deployed from Local by Flywheel to the staging environm
 2.  **Create a Package:**
     *   Go to **Duplicator → Packages** in your WordPress admin.
     *   Click **Create New**.
-    *   Name your package (e.g., "staging-deploy-YYYYMMDD").
+    *   Name your package (e.g., "staging-deploy-2024-11-02").
     *   Under **Archive** settings, ensure all necessary files are included (wp-content, plugins, themes).
     *   Click **Next** to scan your site for issues.
     *   Once the scan passes, click **Build** to create the package.
@@ -124,6 +124,7 @@ The WordPress backend is deployed from Local by Flywheel to the staging environm
 3.  **Prepare Staging Environment on hosting.com:**
     *   Log into your hosting.com account and access **cPanel**.
     *   Navigate to **Domains** and ensure `stg-cms.deanforant.com` is set up and pointing to a directory (e.g., `public_html/stg-cms`).
+    *   **Note:** Subdomain configuration steps may vary by hosting provider. Refer to hosting.com's documentation if needed.
     *   Create a new MySQL database and user via **MySQL Database Wizard** in cPanel.
     *   Note the database name, username, password, and host (usually `localhost`).
 
@@ -138,7 +139,9 @@ The WordPress backend is deployed from Local by Flywheel to the staging environm
     *   Click **Test Database** to verify the connection, then click **Next**.
     *   Review the settings and click **Next** to extract and install the site.
     *   Once complete, click **Admin Login** to log into your newly deployed staging site.
-    *   **Important:** Delete the `installer.php` and archive `.zip` files from the server for security.
+    
+    **⚠️ CRITICAL SECURITY STEP:**
+    *   Immediately delete the `installer.php` and archive `.zip` files from the server. These files pose a significant security risk if left on the server and could allow unauthorized access or reinstallation.
 
 6.  **Post-Deployment Configuration:**
     *   Verify all plugins are active, especially Wordfence, WPGraphQL, and ACF.
