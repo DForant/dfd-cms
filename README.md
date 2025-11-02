@@ -123,8 +123,8 @@ The WordPress backend is deployed from Local by Flywheel to the staging environm
 
 3.  **Prepare Staging Environment on hosting.com:**
     *   Log into your hosting.com account and access **cPanel**.
-    *   Navigate to **Domains** and ensure `stg-cms.deanforant.com` is set up and pointing to a directory (e.g., `public_html/stg-cms`).
     *   **Note:** Subdomain configuration steps may vary by hosting provider. Refer to hosting.com's documentation if needed.
+    *   Navigate to **Domains** and ensure `stg-cms.deanforant.com` is set up and pointing to a directory (e.g., `public_html/stg-cms`).
     *   Create a new MySQL database and user via **MySQL Database Wizard** in cPanel.
     *   Note the database name, username, password, and host (usually `localhost`).
 
