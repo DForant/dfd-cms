@@ -40,3 +40,5 @@ app/public/wp-content/themes/*
 
 # Whitelist themes here
 ## !app/public/wp-content/themes/theme-name
+
+/ror

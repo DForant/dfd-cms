@@ -379,3 +379,251 @@ We want to be able to track the custom fields and groups in source control. In o
 
 5. When the file Save as dialog pops up navigate to portfolio-cms-functions/acf-json folder and save the json file as portfolio-fields.json
 
+
+---
+
+## 8. Production install on Hosting.com (cPanel) with a subdomain
+
+The instructions below walk you through deploying this headless WordPress CMS to a Hosting.com cPanel account and serving it from a subdomain (for example, `cms.yourdomain.com`). The front‑end application can continue to be hosted separately (e.g., Netlify/Vite). The goal is to keep the CMS on its own subdomain and to point that subdomain’s Document Root directly to this repo’s `app/public` directory.
+
+### Prerequisites
+
+- cPanel access on Hosting.com with MySQL and SSL enabled
+- A registered domain on the same account (e.g., `yourdomain.com`)
+- This repository’s code available locally or on GitHub
+- PHP 8.1 or 8.2 available in cPanel (recommended)
+
+### Step 1 — Create the subdomain
+
+1. Log into cPanel.
+2. Go to Domains → Subdomains.
+3. Create a subdomain, e.g., `cms.yourdomain.com`.
+4. Set the Document Root to point at the WordPress public directory in this project:
+     - Recommended: `/home/<cpanel-user>/dfd-cms/app/public`
+     - If cPanel restricts you to `public_html`, use `public_html/cms` and place the contents of `app/public` there (see Alternative layout below).
+5. Save. cPanel will create the directory if it doesn’t exist.
+
+Notes:
+- You can first upload the repository folder `dfd-cms` anywhere under your home directory (e.g., `/home/<user>/dfd-cms`) and then point the subdomain’s Document Root to `/home/<user>/dfd-cms/app/public`.
+
+### Step 2 — Upload/deploy the code
+
+Choose one of the following:
+
+- Option A: Git Deploy (preferred)
+    1. In cPanel, open “Git™ Version Control”.
+    2. Create a new repository clone from your GitHub URL.
+    3. Set the clone path to `/home/<user>/dfd-cms`.
+    4. After cloning, ensure the subdomain’s Document Root is `/home/<user>/dfd-cms/app/public` (Domains → Subdomains → Edit).
+
+- Option B: ZIP Upload
+    1. Zip the local `dfd-cms` folder (including `app/`, `vendor/` if present, and `composer.*`).
+    2. Use cPanel → File Manager to upload and extract it to `/home/<user>/dfd-cms`.
+
+### Step 3 — Install PHP dependencies
+
+This project manages plugins via Composer.
+
+- If your cPanel has SSH or “Terminal”: navigate to `/home/<user>/dfd-cms` and run `composer install` to create the `vendor/` directory.
+- If Composer isn’t available on the host: run `composer install` locally, then upload the generated `vendor/` folder to `/home/<user>/dfd-cms/`.
+
+### Step 4 — Create the database and user
+
+1. In cPanel, open “MySQL® Databases”.
+2. Create a new database (e.g., `youruser_portfolio`).
+3. Create a new MySQL user and strong password.
+4. Add the user to the database with ALL PRIVILEGES.
+5. Optional: If you’re migrating content, import your SQL dump via “phpMyAdmin” (left sidebar) → select the new DB → Import → choose the `.sql` file (e.g., `sql/local.sql`).
+
+### Step 5 — Configure WordPress (`wp-config.php`)
+
+Edit `app/public/wp-config.php` and set the following values:
+
+```php
+// Database settings
+define('DB_NAME', 'youruser_portfolio');
+define('DB_USER', 'youruser_dbuser');
+define('DB_PASSWORD', 'your-strong-password');
+define('DB_HOST', 'localhost');
+
+// Absolute URLs for reliability on subdomain
+define('WP_HOME',    'https://cms.yourdomain.com');
+define('WP_SITEURL', 'https://cms.yourdomain.com');
+
+// Composer autoload (already present in this project)
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// (Recommended) Harden admin file editing
+define('DISALLOW_FILE_EDIT', true);
+```
+
+Also update the Authentication Unique Keys and Salts using the WordPress secret-key service:
+`https://api.wordpress.org/secret-key/1.1/salt/`
+
+### Step 6 — PHP version and extensions
+
+In cPanel → “Select PHP Version” (or “MultiPHP Manager”):
+
+- PHP 8.1 or 8.2
+- Enable extensions: `curl`, `dom`, `gd`, `json`, `mbstring`, `mysqli`, `openssl`, `xml`, `zip`, `intl` (if available)
+- PHP Options (typical): memory_limit 256M; upload_max_filesize 64M; post_max_size 64M; max_execution_time 120
+
+### Step 7 — SSL and HTTPS
+
+1. Enable AutoSSL/Let’s Encrypt for `cms.yourdomain.com` in cPanel → SSL/TLS → SSL/TLS Status.
+2. Force HTTPS by ensuring the standard WordPress `.htaccess` rules exist in `app/public/.htaccess` (WordPress will write them when permalinks are saved). Example minimal rules:
+
+```apache
+# WordPress standard rules
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+```
+
+### Step 8 — Finalize WordPress
+
+1. Visit `https://cms.yourdomain.com/wp-admin` and complete the install/login.
+2. Go to Settings → Permalinks → choose “Post name” → Save.
+3. Verify required plugins are installed/activated (ACF, WPGraphQL, Wordfence, etc.).
+4. Confirm the APIs respond:
+     - REST: `https://cms.yourdomain.com/wp-json/wp/v2/article`
+     - GraphQL: `https://cms.yourdomain.com/graphql`
+
+### Step 9 — Connect the front‑end (optional but recommended)
+
+If your portfolio front‑end is hosted elsewhere (e.g., Netlify), point it to the new CMS subdomain:
+
+- Set the environment variable used by the front‑end/Netlify Functions (e.g., `CMS_BASE_URL=https://cms.yourdomain.com`).
+- Redeploy the front‑end so it begins fetching content from the new subdomain.
+
+### Alternative layout (if Document Root cannot point into `app/public`)
+
+If cPanel requires the Document Root to live under `public_html`, you can:
+
+1. Create the subdomain with Document Root `public_html/cms`.
+2. Copy the contents of this repo’s `app/public/` into `public_html/cms/`.
+3. Keep the rest of the repo (including `vendor/`) in `/home/<user>/dfd-cms/` and ensure `wp-config.php` requires the Composer autoloader using a relative path, for example:
+
+```php
+require_once __DIR__ . '/../../dfd-cms/vendor/autoload.php';
+```
+
+This preserves the convention of keeping non-public code outside the web root while still satisfying shared-host constraints.
+
+## 9. Migrate from Local by Flywheel to Hosting.net Staging (cPanel)
+
+This section walks through moving your Local-by-Flywheel WordPress site (this headless CMS) to a staging subdomain on Hosting.net using cPanel. It covers database export/import, URL updates, file deployment, and staging safeguards.
+
+### Overview
+
+- Source: Local by Flywheel site (e.g., `portfolio-cms.local`)
+- Destination: Staging subdomain (e.g., `cms-staging.yourdomain.com`) hosted on Hosting.net (cPanel)
+- Document Root: point the subdomain to `/home/<user>/dfd-cms/app/public` (or use the Alternative layout in Section 8 if required)
+
+### Step 1 — Prepare in Local
+
+1. Update WordPress core, themes, and plugins.
+2. In Local, right-click your site → Export… → check “Include Database”. Save the `.zip` locally; you’ll have a SQL dump and `wp-content` files.
+3. Alternatively (or additionally), export the database via Adminer/Sequel Ace if you prefer a standalone `.sql` file.
+4. Ensure ACF JSON is committed (this repo already stores Field Groups under `wp-content/plugins/portfolio-cms-functions/acf-json`). On staging you’ll be able to Sync these.
+5. Note your Local site URL (e.g., `http://portfolio-cms.local`)—you’ll need it for search/replace.
+
+### Step 2 — Create the staging subdomain in cPanel
+
+1. cPanel → Domains → Subdomains → Create `cms-staging.yourdomain.com`.
+2. Set Document Root to: `/home/<user>/dfd-cms/app/public`.
+     - If restricted to `public_html`, create `public_html/cms-staging` and see “Alternative layout” in Section 8.
+3. If DNS is managed elsewhere, add an `A` record for `cms-staging` pointing to your server’s IP.
+
+### Step 3 — Deploy code to the server
+
+Choose one:
+
+- Git (preferred): cPanel → Git™ Version Control → Clone this repo to `/home/<user>/dfd-cms` (or `/home/<user>/dfd-cms-staging`).
+- ZIP upload: Upload/extract the project so the path `/home/<user>/dfd-cms/app/public` exists.
+
+Then install PHP dependencies:
+
+- With SSH/Terminal: `composer install` in `/home/<user>/dfd-cms/`.
+- Without Composer on host: run locally and upload the `vendor/` directory to the same path.
+
+Copy uploads from Local:
+
+- From your Local export, copy `wp-content/uploads/` into `/home/<user>/dfd-cms/app/public/wp-content/uploads/`.
+
+### Step 4 — Create database and import
+
+1. cPanel → MySQL® Databases → create DB (e.g., `youruser_portfolio_stg`).
+2. Create a DB user and grant ALL PRIVILEGES to the new DB.
+3. cPanel → phpMyAdmin → select the new DB → Import → choose your Local `.sql` file → Go.
+
+### Step 5 — Configure `wp-config.php`
+
+Edit `/home/<user>/dfd-cms/app/public/wp-config.php`:
+
+```php
+define('DB_NAME', 'youruser_portfolio_stg');
+define('DB_USER', 'youruser_dbuser');
+define('DB_PASSWORD', 'your-strong-password');
+define('DB_HOST', 'localhost');
+
+define('WP_HOME',    'https://cms-staging.yourdomain.com');
+define('WP_SITEURL', 'https://cms-staging.yourdomain.com');
+
+// Mark this instance as staging
+define('WP_ENVIRONMENT_TYPE', 'staging');
+
+// Composer autoload
+require_once __DIR__ . '/../vendor/autoload.php';
+
+// Optional hardening
+define('DISALLOW_FILE_EDIT', true);
+```
+
+Update the Authentication Keys/Salts with fresh values from https://api.wordpress.org/secret-key/1.1/salt/
+
+### Step 6 — Update URLs in the database
+
+After importing the Local DB, it still contains references to the Local URL. Update them to the staging subdomain. Prefer a tool that preserves serialized data:
+
+- WP‑CLI (if available on host):
+    - `wp search-replace 'http://portfolio-cms.local' 'https://cms-staging.yourdomain.com' --skip-columns=guid`
+- Better Search Replace plugin (GUI):
+    - Search for `http://portfolio-cms.local` → Replace with `https://cms-staging.yourdomain.com` → Select all tables → Run as a dry run first.
+
+### Step 7 — SSL, permalinks, and caches
+
+1. cPanel → SSL/TLS Status → enable AutoSSL for `cms-staging.yourdomain.com`.
+2. Visit `https://cms-staging.yourdomain.com/wp-admin`, log in, go to Settings → Permalinks → choose “Post name” → Save (this writes `.htaccess`).
+3. If you use a caching plugin, clear its caches after the URL change.
+
+### Step 8 — Staging safeguards
+
+- Discourage indexing: Settings → Reading → “Discourage search engines…” (checked).
+- robots: ensure `Disallow: /` on staging or use a plugin to set `noindex` headers.
+- Optional password: cPanel → Directory Privacy to protect `/app/public/wp-admin` or entire site.
+- Wordfence: ensure WAF is active; consider relaxed rate limits for your IP while testing.
+
+### Step 9 — Verify the APIs and ACF JSON
+
+- REST: `https://cms-staging.yourdomain.com/wp-json/wp/v2/article`
+- GraphQL: `https://cms-staging.yourdomain.com/graphql`
+- ACF JSON: In WP Admin → ACF → Field Groups, click “Sync” if prompted to load JSON from the repo.
+
+### Step 10 — Front‑end and credentials
+
+- If a front‑end is consuming this staging CMS, configure its env var: `CMS_BASE_URL=https://cms-staging.yourdomain.com` and redeploy.
+- Generate a new Application Password for staging (Users → Profile → Application Passwords) and use it only for staging.
+
+### Troubleshooting
+
+- Mixed content: ensure `WP_HOME/WP_SITEURL` use `https://` and update any hardcoded `http://` assets.
+- 404s: re-save Permalinks; confirm `.htaccess` WordPress rules exist.
+- Login loop: clear browser/site caches; verify cookie domain not pinned to the Local domain.
+- Missing media: confirm `wp-content/uploads/` was copied to the server with correct permissions (typically 755 dirs / 644 files).
+
