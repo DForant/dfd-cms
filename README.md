@@ -92,26 +92,80 @@ The **Wordfence** plugin was configured for maximum protection:
 
 * * *
 
-## 5. Deployment Strategy
-----------------------
+## 5. Standard Deployment Strategy (Local → Staging → Production)
+-----------------------------------------------------------------
 
-The project utilizes a decoupled two-stage (Staging and Production) deployment process using hosting.net.
+This project follows a repeatable workflow that uses Local by Flywheel for development, Hosting.net (cPanel) subdomains for staging/production, and Netlify for the front‑end deploys. To simplify CMS moves between environments, we use the Duplicator plugin to package the WordPress site.
 
-### A. WordPress Backend (Content & CMS)
+High‑level flow:
 
-*   The WordPress backend is deployed using the host's cPanel/hPanel Staging tool for easy staging environment creation.
-    
-*   **Database Synchronization** is performed from Staging to Production only when content structure, plugins, or security settings are verified, preventing direct changes to the live environment.
-    
-*   The `vendor/autoload.php` file is included in `wp-config.php` to ensure all Composer-managed dependencies are loaded efficiently.
-    
+1) Develop locally in Local by Flywheel
+2) Create a Duplicator package of the CMS and deploy to a staging subdomain on Hosting.net (cPanel)
+3) Deploy the front‑end portfolio to a Netlify staging site that points to the staging CMS API
+4) After validation, repeat 2–3 to production using separate subdomain and Netlify production site
 
-### B. Frontend Application
+You can also use the manual cPanel process in Sections 8–9 when needed, but Duplicator is the recommended path for speed and reliability.
 
-*   The front-end code (in a separate public GitHub repository) is deployed to the hosting environment using either Direct Integration (if available) or a manual process (FTP).
-    
-*   The front-end is responsible for making authenticated GraphQL queries to the production WordPress API.
-    
+### A. Staging CMS (Hosting.net via cPanel using Duplicator)
+
+Prereqs:
+- Domain with a staging subdomain ready (e.g., `stg-cms.yourdomain.com`)
+- cPanel access with MySQL and SSL
+- Local by Flywheel site running and up to date
+
+Steps:
+1. In Local, install and activate the Duplicator plugin (free is sufficient).
+2. Duplicator → Packages → Create New:
+    - Include Database and Files
+    - Exclusions (optional): cache, debug logs. Keep `wp-content/uploads` unless you’ll sync media another way.
+    - Build the package and download both files: `installer.php` and the archive `.zip`.
+3. cPanel → Domains → Subdomains → Create `stg-cms.yourdomain.com`.
+    - Document Root: a clean directory for the staging site (e.g., `public_html/stg-cms`).
+4. cPanel → File Manager: upload `installer.php` and the archive `.zip` into that Document Root.
+5. cPanel → MySQL® Databases: create a DB and user, grant ALL PRIVILEGES.
+6. In the browser, open `https://stg-cms.yourdomain.com/installer.php` and follow the Duplicator wizard:
+    - Supply DB name/user/password
+    - When prompted, set the new URL to `https://stg-cms.yourdomain.com`
+    - Let Duplicator run search/replace for URLs
+7. Log into `wp-admin`, then:
+    - Settings → Permalinks → Post name → Save (writes `.htaccess`)
+    - Enable SSL (cPanel AutoSSL) and confirm the site loads over HTTPS
+    - Install/activate required plugins if not included in the archive (ACF, WPGraphQL, Wordfence, etc.)
+    - Generate an Application Password for API usage
+    - Discourage indexing on staging (Settings → Reading)
+
+Verification:
+- REST: `https://stg-cms.yourdomain.com/wp-json/wp/v2/article`
+- GraphQL: `https://stg-cms.yourdomain.com/graphql`
+
+### B. Staging Front‑end (Netlify)
+
+1. Create a new Netlify site from the front‑end repo (`portfolio-site`).
+2. Build command and publish directory (Vite):
+    - Build command: `npm --workspace frontend run build`
+    - Publish directory: `frontend/dist`
+3. Environment variables:
+    - `CMS_BASE_URL=https://stg-cms.yourdomain.com`
+    - Any API keys or function URLs required by your setup
+4. Redirects (SPA): ensure your `netlify.toml` includes SPA fallback and any function routes.
+5. Deploy and verify that the portfolio pages pull article/project data from the staging CMS.
+
+### C. Promote to Production
+
+Create a separate CMS subdomain and a separate Netlify site (or a production branch on the same site):
+
+1. CMS (cPanel with Duplicator):
+    - Subdomain: `cms.yourdomain.com` (production)
+    - Repeat the Duplicator package and install steps (you can package from staging if content is more current than local)
+    - Ensure indexing is allowed on production (uncheck “Discourage search engines…”) and Wordfence rules are tuned
+2. Front‑end (Netlify):
+    - Production site or main branch deploy
+    - `CMS_BASE_URL=https://cms.yourdomain.com`
+    - Confirm API calls resolve to production CMS
+
+Notes:
+- Composer-managed plugins: if you rely on Composer in production, ensure your Duplicator package includes `vendor/` or run `composer install` after extraction.
+- Alternative/manual path: See Sections 8–9 for cPanel deployment and database migration without Duplicator.
 
 * * *
 
