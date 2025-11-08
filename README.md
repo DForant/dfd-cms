@@ -169,6 +169,14 @@ Notes:
 
 * * *
 
+### Related front‑end deployment docs (Netlify)
+
+- For the SPA (portfolio-site) staging/production steps and the exact environment variables to set, see: `portfolio-site/README.md` → “Front‑end Staging/Production Checklist (Netlify + CMS)”.
+- Key front‑end env to set per environment:
+    - Staging: `CMS_BASE_URL=https://stg-cms.yourdomain.com`
+    - Production: `CMS_BASE_URL=https://cms.yourdomain.com`
+    - Optionally `WP_API_BASE_URL` for functions if your REST root differs.
+
 ## 6. Local Development Setup Guide
 --------------------------------
 
