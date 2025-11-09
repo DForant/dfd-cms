@@ -42,3 +42,4 @@ app/public/wp-content/themes/*
 ## !app/public/wp-content/themes/theme-name
 
 /ror
+app/sql/local.sql
