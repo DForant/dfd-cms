@@ -42,4 +42,7 @@ app/public/wp-content/themes/*
 ## !app/public/wp-content/themes/theme-name
 
 /ror
-app/sql/local.sql
+
+# Ignore the entire SQL directory and all its contents
+app/sql/
+app/sql/*
