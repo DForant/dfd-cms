@@ -267,3 +267,50 @@ function portfolio_register_author_rest_fields() {
     }
 }
 add_action( 'rest_api_init', 'portfolio_register_author_rest_fields' );
+
+/**
+ * Register additional REST API fields for articles and projects
+ */
+function portfolio_register_additional_rest_fields() {
+    $post_types = array( 'article', 'project' );
+
+    foreach ( $post_types as $post_type ) {
+        // Register author_name field
+        register_rest_field(
+            $post_type,
+            'author_name',
+            array(
+                'get_callback' => function( $post ) {
+                    $author_id = $post['author'];
+                    $author_name = get_the_author_meta( 'display_name', $author_id );
+                    return $author_name ? $author_name : 'Dean Forant';
+                },
+                'schema' => array(
+                    'description' => 'Author display name',
+                    'type' => 'string',
+                ),
+            )
+        );
+
+        // Register featured_image_url field
+        register_rest_field(
+            $post_type,
+            'featured_image_url',
+            array(
+                'get_callback' => function( $post ) {
+                    $featured_id = get_post_thumbnail_id( $post['id'] );
+                    if ( $featured_id ) {
+                        $image = wp_get_attachment_image_src( $featured_id, 'large' );
+                        return $image ? $image[0] : null;
+                    }
+                    return null;
+                },
+                'schema' => array(
+                    'description' => 'Featured image URL (large size)',
+                    'type' => 'string',
+                ),
+            )
+        );
+    }
+}
+add_action( 'rest_api_init', 'portfolio_register_additional_rest_fields' );
